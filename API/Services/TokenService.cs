@@ -23,7 +23,8 @@ namespace API.Services
             var tokenDsecriptor = new SecurityTokenDescriptor{
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(7),
-                SigningCredentials = creds
+                SigningCredentials = creds,
+                
             };
             
             var tokenHandler = new JwtSecurityTokenHandler();
