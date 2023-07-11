@@ -21,10 +21,9 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            var users = await _reposoitory.GetUsersAsync();
+            var users = await _reposoitory.GetMembersAsync();
 
-            var usersToReturn = _mapper.Map<IEnumerable<MemberDTO>>(users);
-            return Ok(usersToReturn);
+            return Ok(users);
         }
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDTO>> GetUser(string username )
