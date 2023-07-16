@@ -1,6 +1,6 @@
-using API.DTO;
+using API.DTOs;
 using API.Entities;
-using API.Intefaces;
+using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -10,48 +10,45 @@ namespace API.Data
     public class UserRepository : IUserRepository
     {
         private readonly DataContext _context;
-        public readonly IMapper _mapper ; 
-
+        private readonly IMapper _mapper;
         public UserRepository(DataContext context, IMapper mapper)
         {
-            this._mapper = mapper;
-            this._context = context;
+            _mapper = mapper;
+            _context = context;
         }
 
-        public async Task<MemberDTO> GetMemberByNameAsync(string username)
+        public async Task<MemberDto> GetMemberAsync(string username)
         {
             return await _context.Users
-                .Where(x => x.Username == username)
-                .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
+                .Where(x => x.UserName == username)
+                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<MemberDTO>> GetMembersAsync()
+        public async Task<IEnumerable<MemberDto>> GetMembersAsync()
         {
-                return await _context.Users
-                .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
+            return await _context.Users
+                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
         {
-            return await _context.Users
-            .Include(x=> x.Photos)
-            .SingleOrDefaultAsync(x => x.Id ==id);
+            return await _context.Users.FindAsync(id);
         }
 
-        public async Task<AppUser> GetUserByNameAsync(string username)
+        public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
             return await _context.Users
-            .Include(x=> x.Photos)
-            .SingleOrDefaultAsync(x => x.Username == username);
+                .Include(p => p.Photos)
+                .SingleOrDefaultAsync(x => x.UserName == username);
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
             return await _context.Users
-            .Include(x=> x.Photos)
-            .ToListAsync();
+                .Include(p => p.Photos)
+                .ToListAsync();
         }
 
         public async Task<bool> SaveAllAsync()

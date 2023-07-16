@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
-import { Member } from 'src/app/_models/Member';
+import { Member } from 'src/app/_models/member';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -10,50 +10,49 @@ import { MembersService } from 'src/app/_services/members.service';
   styleUrls: ['./member-detail.component.css']
 })
 export class MemberDetailComponent implements OnInit {
-  member:Member|undefined
-  constructor(private memberService:MembersService, private router:ActivatedRoute, private route: Router) { }
+  member: Member | undefined;
+  galleryOptions: NgxGalleryOptions[] = [];
+  galleryImages: NgxGalleryImage[] = [];
 
-  galleryOptions: NgxGalleryOptions[] = []
-
-  galleryImages: NgxGalleryImage[] = []
+  constructor(private memberService: MembersService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.loadMemberDetails();
+    this.loadMember();
+
     this.galleryOptions = [
       {
-        width:'500px',
-        height:'500px',
-        imagePercent:100,
-        thumbnailsColumns:4,
+        width: '500px',
+        height: '500px',
+        imagePercent: 100,
+        thumbnailsColumns: 4,
         imageAnimation: NgxGalleryAnimation.Slide,
-        preview:false
+        preview: false
       }
     ]
   }
-  getImages(){
-    if(!this.member) return [];
+
+  getImages() {
+    if (!this.member) return [];
     const imageUrls = [];
-    for(const photo of this.member.photos){
+    for (const photo of this.member.photos) {
       imageUrls.push({
-        small:photo.url,
-        medium:photo.url,
-        big:photo.url
+        small: photo.url,
+        medium: photo.url,
+        big: photo.url
       })
     }
-    return imageUrls
+    return imageUrls;
   }
 
-
-  loadMemberDetails(){
-    const username = this.router.snapshot.paramMap.get('username')
-    if(username)
+  loadMember() {
+    var username = this.route.snapshot.paramMap.get('username');
+    if (!username) return;
     this.memberService.getMember(username).subscribe({
-      next: user => {this.member = user
-      this.galleryImages = this.getImages();}
-    });
+      next: member => {
+        this.member = member;
+        this.galleryImages = this.getImages();
+      }
+    })
   }
-
-
-
 
 }

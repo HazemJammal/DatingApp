@@ -15,7 +15,7 @@ namespace API.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.0-rc.2.22472.11");
 
             modelBuilder.Entity("API.Entities.AppUser", b =>
                 {
@@ -59,7 +59,7 @@ namespace API.Data.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserName")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

@@ -6,14 +6,14 @@ import {
   HttpInterceptor,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, catchError } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { NavigationExtras, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
 
-  constructor(private router: Router, private toast: ToastrService) { }
+  constructor(private router: Router, private toastr: ToastrService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
@@ -22,45 +22,35 @@ export class ErrorInterceptor implements HttpInterceptor {
           switch (error.status) {
             case 400:
               if (error.error.errors) {
-                const modalStateErrors = []
-                let valderrors:string[] = []
-                
+                const modelStateErrors = [];
                 for (const key in error.error.errors) {
                   if (error.error.errors[key]) {
-                    modalStateErrors.push(error.error.errors[key])  
+                    modelStateErrors.push(error.error.errors[key])
                   }
                 }
-                for (const key in modalStateErrors) {
-                  var shit = modalStateErrors[key].toString();
-                  valderrors.push(shit +"\n")
-                }
-                var newvalid = valderrors.toString().replace(/,/g,"");
-                this.toast.error(newvalid)
-                throw modalStateErrors
+                throw modelStateErrors.flat();
+              } else {
+                this.toastr.error(error.error, error.status.toString())
               }
-              else {
-                this.toast.error(error.error, error.status.toString())
-              }
-
               break;
-
             case 401:
-              this.toast.error("Unauthriozed", error.status.toString())
+              this.toastr.error('Unauthorised', error.status.toString());
               break;
             case 404:
-              this.router.navigateByUrl('/not-found')
+              this.router.navigateByUrl('/not-found');
               break;
             case 500:
-              const navigate: NavigationExtras = { state: { error: error.error } }
-              this.router.navigateByUrl('/server-error', navigate)
+              const navigationExtras: NavigationExtras = {state: {error: error.error}};
+              this.router.navigateByUrl('/server-error', navigationExtras);
               break;
             default:
-              this.toast.error("Wtf happended")
-
+              this.toastr.error('Something unexpected went wrong');
+              console.log(error);
+              break;
           }
         }
         throw error;
       })
-    );
+    )
   }
 }
