@@ -13,10 +13,12 @@ namespace API.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
-        public AccountController(DataContext context, ITokenService tokenService)
+        private readonly IAccountRepository _accountRepository;
+        public AccountController(DataContext context, ITokenService tokenService,IAccountRepository accountRepository)
         {
             _tokenService = tokenService;
             _context = context;
+            _accountRepository = accountRepository;
         }
 
         [HttpPost("register")] // POST: api/account/register?username=dave&password=pwd
@@ -39,15 +41,14 @@ namespace API.Controllers
             return new UserDto
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
             };
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x =>
-                x.UserName == loginDto.Username);
+            var user = await _accountRepository.GetUserByUsernameAsync(loginDto.Username);
 
             if (user == null) return Unauthorized("invalid username");
 
@@ -63,7 +64,8 @@ namespace API.Controllers
             return new UserDto
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(x=>x.IsMain)?.Url
             };
         }
 
