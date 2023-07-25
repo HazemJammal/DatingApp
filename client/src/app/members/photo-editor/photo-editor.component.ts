@@ -51,7 +51,6 @@ export class PhotoEditorComponent implements OnInit {
       autoUpload: false,
       maxFileSize: 10 * 1024 * 1024,
     })
-
     this.uploader.onAfterAddingFile = (file) => [
       file.withCredentials = false
     ]
@@ -59,7 +58,13 @@ export class PhotoEditorComponent implements OnInit {
     this.uploader.onSuccessItem = (item, response, status, hearders) => {
       if (response) {
         const photo = JSON.parse(response)
+        
         this.member?.photos.push(photo)
+        if(photo.isMain && this.user && this.member){
+          this.user.photoUrl = photo.url
+          this.member.photoUrl = photo.url
+          this.accountService.setCurrentUser(this.user)
+        }
       }
     }
   }
