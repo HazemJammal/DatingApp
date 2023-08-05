@@ -18,8 +18,8 @@ namespace API.Extensions
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IAccountRepository,AccountRepository>();
             services.AddScoped<IPhotoService,PhotoService>();
+            services.AddScoped<ILikeRepository,LikeRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<LogUserActvity>();

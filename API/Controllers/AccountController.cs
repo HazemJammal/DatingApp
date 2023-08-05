@@ -16,7 +16,7 @@ namespace API.Controllers
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
-        public AccountController(IMapper mapper, DataContext context, ITokenService tokenService, IAccountRepository accountRepository)
+        public AccountController(IMapper mapper, DataContext context, ITokenService tokenService)
         {
             _tokenService = tokenService;
             _context = context;
