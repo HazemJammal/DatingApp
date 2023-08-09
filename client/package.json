@@ -22,7 +22,7 @@
     "bootstrap": "^5.2.2",
     "bootswatch": "^5.2.2",
     "font-awesome": "^4.7.0",
-    "ng2-file-upload": "^3.0.0",
+    "ng2-file-upload": "^2.0.0-3",
     "ngx-bootstrap": "^9.0.0",
     "ngx-spinner": "^14.0.0",
     "ngx-timeago": "^2.0.0",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.5",
-    "@angular/cli": "~14.2.5",
+    "@angular/cli": "^14.2.6",
     "@angular/compiler-cli": "^14.2.0",
     "@types/jasmine": "~4.0.0",
     "jasmine-core": "~4.3.0",

@@ -1,16 +1,19 @@
 <div class="row mb-3" *ngIf="member">
     <div class="col-2 mb-1" *ngFor="let photo of member.photos">
-        <img src="{{photo.url}}" alt="{{member.userName}} Photo" class="img-thumbnail mb-1">
+        <img src="{{photo.url}}" alt="photo of user" class="img-thumbnail mb-1">
         <div class="text-center">
-            <button [disabled]="photo.isMain" 
-            [ngClass]="photo.isMain ? 'btn-success active'  :'btn-outline-success'" 
-            class="btn btn-sm" 
-            (click)="setAsMainPhoto(photo)">Main</button>
             <button 
-            [disabled]="photo.isMain"
-            class="btn btn-sm btn-danger" (click)="deletePhoto(photo.id)"><i class="fa fa-trash"></i></button>
+                class="btn btn-sm"
+                [disabled]="photo.isMain"
+                (click)="setMainPhoto(photo)"
+                [ngClass]="photo.isMain ? 'btn-success active' : 'btn-outline-success' "
+            >Main</button>
+            <button 
+                class="btn btn-sm btn-danger"
+                [disabled]="photo.isMain"
+                (click)="deletePhoto(photo.id)"
+            ><i class="fa fa-trash"></i></button>
         </div>
-        
     </div>
 </div>
 
@@ -26,7 +29,7 @@
              [uploader]="uploader"
              class="card bg-faded p-3 text-center mb-3 my-drop-zone">
              <i class="fa fa-upload fa-3x"></i>
-            Drop Photos Here
+            Drop photos here
         </div>
 
         Multiple
@@ -52,7 +55,6 @@
             <tr *ngFor="let item of uploader?.queue">
                 <td><strong>{{ item?.file?.name }}</strong></td>
                 <td *ngIf="uploader?.options?.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
-                
             </tr>
             </tbody>
         </table>
@@ -70,7 +72,7 @@
             </button>
             <button type="button" class="btn btn-warning btn-s"
                     (click)="uploader?.cancelAll()" [disabled]="!uploader?.isUploading">
-                <span class="fa fa-ban-circle"></span> Cancel all
+                <span class="fa fa-ban"></span> Cancel all
             </button>
             <button type="button" class="btn btn-danger btn-s"
                     (click)="uploader?.clearQueue()" [disabled]="!uploader?.queue?.length">

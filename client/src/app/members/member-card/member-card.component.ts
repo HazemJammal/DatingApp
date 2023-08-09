@@ -11,19 +11,15 @@ import { MembersService } from 'src/app/_services/members.service';
 export class MemberCardComponent implements OnInit {
   @Input() member: Member | undefined;
 
-  constructor(private memberService:MembersService, private toast:ToastrService) { }
+  constructor(private memberService: MembersService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
   }
 
-  addLike(member:Member){
-    if(!this.member) return
-
-    this.memberService.addLike(member.userName).subscribe(
-      {
-        next: ()=> this.toast.success("You have liked " + this.member?.knownAs)
-      }
-    )
+  addLike(member: Member) {
+    this.memberService.addLike(member.userName).subscribe({
+      next: () => this.toastr.success('You have liked ' + member.knownAs)
+    })
   }
 
 }

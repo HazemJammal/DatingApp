@@ -15,12 +15,11 @@ namespace API.Controllers
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
-
-        public AccountController(IMapper mapper, DataContext context, ITokenService tokenService)
+        public AccountController(DataContext context, ITokenService tokenService, IMapper mapper)
         {
+            _mapper = mapper;
             _tokenService = tokenService;
             _context = context;
-            _mapper = mapper;
         }
 
         [HttpPost("register")] // POST: api/account/register?username=dave&password=pwd
@@ -51,8 +50,9 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _context.Users.Include(p => p.Photos).
-            SingleOrDefaultAsync(x=> x.UserName == loginDto.Username);
+            var user = await _context.Users
+                .Include(p => p.Photos)
+                .SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
 
             if (user == null) return Unauthorized("invalid username");
 
@@ -65,8 +65,6 @@ namespace API.Controllers
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("invalid password");
             }
 
-            user.LastActive =  DateTime.UtcNow;
-            await _context.SaveChangesAsync();
             return new UserDto
             {
                 Username = user.UserName,

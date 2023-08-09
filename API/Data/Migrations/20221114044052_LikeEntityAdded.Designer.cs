@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230802075112_LikeAdded")]
-    partial class LikeAdded
+    [Migration("20221114044052_LikeEntityAdded")]
+    partial class LikeEntityAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,7 +129,7 @@ namespace API.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Entities.AppUser", "TargetUser")
+                    b.HasOne("API.Entities.AppUser", "TargerUser")
                         .WithMany("LikedByUsers")
                         .HasForeignKey("TargetUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -137,7 +137,7 @@ namespace API.Data.Migrations
 
                     b.Navigation("SourceUser");
 
-                    b.Navigation("TargetUser");
+                    b.Navigation("TargerUser");
                 });
 
             modelBuilder.Entity("API.Entities.AppUser", b =>
