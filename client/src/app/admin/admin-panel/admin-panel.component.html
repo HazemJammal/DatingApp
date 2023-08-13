@@ -1,8 +1,8 @@
 <h2>Admin Panel</h2>
 
 <div class="tab-panel">
-    <tabset class="member-tabset">
-        <tab heading="User management" *appHasRole="['Admin']">
+    <tabset class="member-tabset" #adminPanel>
+        <tab heading="User management" *appHasRole="['Admin']" (selectTab)="onTabActivated($event)">
             <div class="container">
                 <app-user-management></app-user-management>
             </div>

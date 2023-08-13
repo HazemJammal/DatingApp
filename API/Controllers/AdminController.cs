@@ -1,4 +1,10 @@
+using API.Data;
+using API.DTOs;
 using API.Entities;
+using API.Helpers;
+using API.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +15,18 @@ namespace API.Controllers
     public class AdminController : BaseApiController
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
 
-        public AdminController(UserManager<AppUser> userManager)
+        public AdminController(UserManager<AppUser> userManager, DataContext dataContext, IMapper mapper,
+            IUserRepository userRepository
+        )
         {
+            this._mapper = mapper;
+            this._context = dataContext;
             this._userManager = userManager;
+            this._userRepository = userRepository;
 
         }
         [Authorize(Policy = "RequireAdminRole")]
@@ -53,7 +67,7 @@ namespace API.Controllers
             if (!result.Succeeded) return BadRequest(result.Errors);
 
             result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
-           
+
             if (!result.Succeeded) return BadRequest(result.Errors);
 
             return Ok(await _userManager.GetRolesAsync(user));
@@ -63,9 +77,59 @@ namespace API.Controllers
 
         [Authorize(Policy = "RequireModeratorRole")]
         [HttpGet("photos-to-moderate")]
-        public ActionResult GetPhotosAsModerator()
+        public async Task<ActionResult<IEnumerable<PhotosToVerifyDto>>> GetPhotosAsModerator()
         {
-            return Ok("Moderators only see");
+            var photos = await _context.Photos
+                                .Include(p => p.AppUser)
+                                .Where(p => p.ShowAdminPhoto)
+                                .ToListAsync();
+
+            var photosDto = photos.Select(photo => new PhotosToVerifyDto
+            {
+                Id = photo.Id,
+                Url = photo.Url,
+                Username = photo.AppUser.UserName
+            });
+
+
+            return Ok(photosDto);
         }
+
+        [Authorize(Policy = "RequireModeratorRole")]
+        [HttpPut("photos-to-verify/{id}")]
+
+        public async Task<ActionResult> VerifyPhoto(int id, [FromQuery] string decision)
+        {
+
+
+            var photo = await _context.Photos.Include(x => x.AppUser).FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _userRepository.GetMemberAsync(photo.AppUser.UserName);
+
+            if (photo == null) return NotFound();
+
+            if (photo.ShowAdminPhoto == false) return BadRequest("Photo is already verified");
+
+            photo.ShowAdminPhoto = false;
+
+            if (decision == "Accept")
+            {
+                photo.AllowPhoto = true;
+                if (user.Photos.Count == 0)
+                {
+                    photo.IsMain = true;
+                }
+
+            }
+            else if (decision == "Reject")
+            {
+                photo.AllowPhoto = false;
+            }
+
+            if (await _context.SaveChangesAsync() > 0) return Ok(user);
+
+            return BadRequest("Something Went worng");
+        }
+
+
     }
 }

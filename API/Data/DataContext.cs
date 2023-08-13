@@ -15,11 +15,12 @@ namespace API.Data
 
         public DbSet<UserLike> Likes { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Photo> Photos{get;set;}
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
+        
             builder.Entity<AppUser>()
                     .HasMany(ur => ur.UserRoles)
                     .WithOne(ur => ur.User)

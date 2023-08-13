@@ -76,6 +76,10 @@ export class MembersService {
     return this.http.get<Member>(this.baseUrl + 'users/' + username);
   }
 
+  getCurrentUser(username:string){
+    return this.http.get<Member>(this.baseUrl + 'users/current-user/' + username)
+  }
+
   updateMember(member: Member) {
     return this.http.put(this.baseUrl + 'users', member).pipe(
       map(() => {

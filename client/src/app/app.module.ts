@@ -55,7 +55,7 @@ import { RolesModalComponent } from './modal/roles-modal/roles-modal.component';
     HasRoleDirective,
     UserManagementComponent,
     PhotoManagementComponent,
-    RolesModalComponent
+    RolesModalComponent,
   ],
   imports: [
     BrowserAnimationsModule,

@@ -18,6 +18,16 @@ namespace API.Data
             _context = context;
         }
 
+        public async Task<CurrentUserDto> GetCurrentUserAsync(string username)
+        {
+            return await  _context.Users
+                .Where(x => x.UserName == username)
+                .ProjectTo<CurrentUserDto>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync();
+
+        }
+
+
         public async Task<MemberDto> GetMemberAsync(string username)
         {
             return await _context.Users
@@ -45,8 +55,8 @@ namespace API.Data
             };
 
             return await PagedList<MemberDto>.CreateAsync(
-                query.AsNoTracking().ProjectTo<MemberDto>(_mapper.ConfigurationProvider), 
-                userParams.PageNumber, 
+                query.AsNoTracking().ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+                userParams.PageNumber,
                 userParams.PageSize);
 
         }

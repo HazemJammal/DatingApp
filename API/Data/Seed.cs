@@ -31,7 +31,11 @@ namespace API.Data
 
             foreach (var user in users)
             {
-                using var hmac = new HMACSHA512();
+                var photos = user.Photos;
+                foreach(var photo in photos){
+                    photo.ShowAdminPhoto = false;
+                    photo.AllowPhoto = true;
+                }
 
                 user.UserName = user.UserName.ToLower();
                 

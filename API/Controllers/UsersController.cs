@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
@@ -8,7 +6,6 @@ using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -51,6 +48,12 @@ namespace API.Controllers
         {
             return await _userRepository.GetMemberAsync(username);
         }
+        [HttpGet("current-user/{username}")]
+        
+        public async Task<ActionResult<CurrentUserDto>> GetCurrentUser(string username){
+            
+            return await _userRepository.GetCurrentUserAsync(username);
+        }
 
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
@@ -83,7 +86,6 @@ namespace API.Controllers
                 PublicId = result.PublicId
             };
 
-            if (user.Photos.Count == 0) photo.IsMain = true;
 
             user.Photos.Add(photo);
 
